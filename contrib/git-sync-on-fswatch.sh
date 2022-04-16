@@ -26,16 +26,17 @@ echo "Syncing $(git remote get-url $remote_name) at $(pwd) with a default sync i
 while true; do
 	changedFile=$(
 	    gtimeout "$GIT_SYNC_INTERVAL" fswatch \
-		--event NoOp \
 		--event Created \
 		--event Updated \
 		--event Removed \
 		--event Renamed \
 		--one-event \
+		--latency 3 \
+		--extended \
 		--exclude '\.git' \
+		--exclude '.*/\.#.+' \
 		--recursive \
 		--format "%f:%p%n" \
-		--monitor-property darwin.eventStream.noDefer=1 \
 		"$GIT_SYNC_DIRECTORY" 2>/dev/null
 	)
 	if [ -z "$changedFile" ]
